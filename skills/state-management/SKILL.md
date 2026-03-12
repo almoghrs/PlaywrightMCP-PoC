@@ -232,5 +232,5 @@ Tests run in parallel by default (`fullyParallel: true` in config). This works b
 - Playwright fixtures docs: https://playwright.dev/docs/test-fixtures
 - Playwright auth docs: https://playwright.dev/docs/auth
 - Playwright parallelism docs: https://playwright.dev/docs/test-parallel
-- Test-authoring skill: `skills/test-authoring/SKILL.md` — how to extend fixtures
+- Test creation skill: `skills/test-creation-and-editing/SKILL.md` — how to extend fixtures
 - Agents.md Section 7: Error Handling & Debugging

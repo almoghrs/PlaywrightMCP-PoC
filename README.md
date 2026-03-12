@@ -38,13 +38,10 @@ This launches the official `@playwright/mcp` server, exposing tools like `browse
 
 ```
 ├── Agents.md                  # Master guide for AI agents
-├── skills/                    # Modular skill definitions for agents
-│   ├── test-authoring/        # How to create tests
-│   ├── element-location/      # How to find elements
-│   ├── dom-inspection/        # How to inspect page state
-│   ├── assertion-building/    # How to build assertions
-│   ├── page-interaction/      # How to interact with the page
-│   └── state-management/      # How to manage test state
+├── skills/                          # Modular skill definitions for agents
+│   ├── test-creation-and-editing/   # How to create and edit tests (MCP-first workflow)
+│   ├── assertion-building/          # How to build assertions
+│   └── state-management/            # How to manage test state & fixtures
 ├── tests/
 │   ├── fixtures/              # Shared test fixtures
 │   └── wikipedia/             # Test specs grouped by feature

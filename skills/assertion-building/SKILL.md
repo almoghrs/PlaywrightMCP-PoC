@@ -177,5 +177,5 @@ Prefer regex when the exact wording might change but the key content won't.
 ## References
 
 - Playwright assertions docs: https://playwright.dev/docs/test-assertions
-- Test-authoring skill: `skills/test-authoring/SKILL.md` — test structure and `test.step()`
+- Test creation skill: `skills/test-creation-and-editing/SKILL.md` — test structure and `test.step()`
 - Agents.md Section 6: Playwright Test-Writing Standards

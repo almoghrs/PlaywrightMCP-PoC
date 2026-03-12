@@ -20,14 +20,11 @@ The target application is **Wikipedia** (`https://en.wikipedia.org`). The archit
 
 ```
 PlaywrightMCP-PoC/
-├── Agents.md                          ← You are here
-├── skills/                            ← Modular skill definitions (read before acting)
-│   ├── test-authoring/SKILL.md        ← How to create test files
-│   ├── element-location/SKILL.md      ← How to find elements on a page
-│   ├── dom-inspection/SKILL.md        ← How to inspect page state via MCP
-│   ├── assertion-building/SKILL.md    ← How to write assertions
-│   ├── page-interaction/SKILL.md      ← How to interact with page elements
-│   └── state-management/SKILL.md      ← How to manage test state & fixtures
+├── Agents.md                                    ← You are here
+├── skills/                                      ← Modular skill definitions (read before acting)
+│   ├── test-creation-and-editing/SKILL.md       ← How to create and edit tests (MCP-first workflow)
+│   ├── assertion-building/SKILL.md              ← How to write assertions
+│   └── state-management/SKILL.md               ← How to manage test state & fixtures
 ├── tests/
 │   ├── fixtures/
 │   │   └── base.fixture.ts            ← Base fixtures (homePage, etc.)
@@ -61,12 +58,13 @@ When working in this repository, you **MUST**:
 
 1. **Read this file first** before writing any code.
 2. **Read the relevant skill** before performing a task (see [Skill Index](#10-skill-index) below).
-3. **Always use the Page Object Model (POM)** — never put locators directly in test files.
-4. **Always use fixtures** for shared setup — never duplicate setup code across tests.
-5. **Never hardcode selectors** — define them in POM classes in `pages/`.
-6. **Run tests after changes** — verify with `npx playwright test` before considering work complete.
-7. **Follow the coding standards** in Section 5 and the test-writing standards in Section 6.
-8. **Keep tests independent** — each test must work in isolation. No shared mutable state.
+3. **Before creating or editing any test, use Playwright MCP to explore the live page first** — navigate to the target URL, take a `browser_snapshot`, and walk through the entire user flow using MCP tools. Only once you have observed the real browser are you permitted to write code.
+4. **Always use the Page Object Model (POM)** — never put locators directly in test files.
+5. **Always use fixtures** for shared setup — never duplicate setup code across tests.
+6. **Never hardcode selectors** — define them in POM classes in `pages/`.
+7. **Run tests after changes** — verify with `npx playwright test` before considering work complete.
+8. **Follow the coding standards** in Section 5 and the test-writing standards in Section 6.
+9. **Keep tests independent** — each test must work in isolation. No shared mutable state.
 
 You **MUST NOT**:
 
@@ -277,22 +275,24 @@ The `@playwright/mcp` server provides these tools for browser interaction:
 
 Before performing a task, **read the relevant skill file**. Each skill provides detailed instructions, examples, and anti-patterns.
 
-| Skill                  | Path                                 | Use When                                                              |
-| ---------------------- | ------------------------------------ | --------------------------------------------------------------------- |
-| **Test Authoring**     | `skills/test-authoring/SKILL.md`     | Creating new test files, structuring tests, extending fixtures        |
-| **Element Location**   | `skills/element-location/SKILL.md`   | Finding elements on a page, choosing the right locator strategy       |
-| **DOM Inspection**     | `skills/dom-inspection/SKILL.md`     | Inspecting page state, reading the accessibility tree via MCP         |
-| **Assertion Building** | `skills/assertion-building/SKILL.md` | Writing assertions, choosing the right matcher, avoiding flaky checks |
-| **Page Interaction**   | `skills/page-interaction/SKILL.md`   | Clicking, typing, selecting, hovering, navigating                     |
-| **State Management**   | `skills/state-management/SKILL.md`   | Managing fixtures, storage state, environment config, test isolation  |
+| Skill                       | Path                                        | Use When                                                                                          |
+| --------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **Test Creation & Editing** | `skills/test-creation-and-editing/SKILL.md` | Creating or editing tests, POMs, fixtures — includes the mandatory MCP-first exploration workflow |
+| **Assertion Building**      | `skills/assertion-building/SKILL.md`        | Writing assertions, choosing the right matcher, avoiding flaky checks                             |
+| **State Management**        | `skills/state-management/SKILL.md`          | Managing fixtures, auth sessions, environment config, test isolation                              |
 
 ---
 
 ## Quick Reference: Creating a New Test
 
-1. **Read** `skills/test-authoring/SKILL.md`
-2. **Inspect** the target page with `browser_snapshot` (see `skills/dom-inspection/SKILL.md`)
-3. **Create a POM** in `pages/<page-name>.page.ts` with locators discovered from the snapshot
-4. **Create a fixture** in `tests/fixtures/` (or extend existing one) to instantiate the POM
-5. **Write the test** in `tests/<area>/<feature>.spec.ts` using the fixture
+> **The browser comes first. Always.**
+
+1. **Read** `skills/test-creation-and-editing/SKILL.md`
+2. **Open the browser via MCP** — use `browser_navigate` to go to the target URL
+3. **Snapshot the page** — use `browser_snapshot` to read the accessibility tree
+4. **Walk through the entire user flow live** — use `browser_click`, `browser_type`, and other MCP tools to perform every action the test will cover; take another `browser_snapshot` after each significant step to observe what changes
+5. **Only now write code** — with the full flow understood from the live browser:
+   - Create a POM in `pages/<page-name>.page.ts` using locators read from the snapshots
+   - Create or extend a fixture in `tests/fixtures/`
+   - Write the test spec in `tests/<area>/<feature>.spec.ts`
 6. **Run** `npx playwright test` to verify
