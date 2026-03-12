@@ -1,0 +1,19 @@
+{
+  "name": "playwright-mcp-poc",
+  "version": "1.0.0",
+  "description": "A template for E2E testing with Playwright, TypeScript, and MCP",
+  "private": true,
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug",
+    "test:ui": "npx playwright test --ui",
+    "report": "npx playwright show-report",
+    "mcp:start": "npx @playwright/mcp@latest"
+  },
+  "devDependencies": {
+    "@playwright/mcp": "^0.0.28",
+    "@playwright/test": "^1.52.0",
+    "typescript": "^5.8.0"
+  }
+}
