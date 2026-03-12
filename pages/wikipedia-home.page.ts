@@ -20,4 +20,9 @@ export class WikipediaHomePage {
   async goto() {
     await this.page.goto("/wiki/Main_Page");
   }
+
+  async search(query: string) {
+    await this.searchInput.fill(query);
+    await this.searchButton.click();
+  }
 }
