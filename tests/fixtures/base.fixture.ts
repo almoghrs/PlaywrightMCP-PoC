@@ -1,5 +1,5 @@
-import { test as base } from '@playwright/test';
-import { WikipediaHomePage } from '../../pages/wikipedia-home.page';
+import { test as base } from "@playwright/test";
+import { WikipediaHomePage } from "../../pages/wikipedia-home.page";
 
 type Fixtures = {
   homePage: WikipediaHomePage;
@@ -13,4 +13,4 @@ export const test = base.extend<Fixtures>({
   },
 });
 
-export { expect } from '@playwright/test';
+export { expect } from "@playwright/test";

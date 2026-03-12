@@ -20,47 +20,47 @@ All interactions are performed on Locators. Playwright **auto-waits** for the el
 
 ```typescript
 // Click
-await page.getByRole('button', { name: 'Search' }).click();
+await page.getByRole("button", { name: "Search" }).click();
 
 // Fill a text field (clears existing content first)
-await page.getByRole('searchbox').fill('TypeScript');
+await page.getByRole("searchbox").fill("TypeScript");
 
 // Type character by character (useful for auto-complete triggers)
-await page.getByRole('searchbox').pressSequentially('Type', { delay: 100 });
+await page.getByRole("searchbox").pressSequentially("Type", { delay: 100 });
 
 // Select from dropdown
-await page.getByRole('combobox').selectOption('en');
-await page.getByRole('combobox').selectOption({ label: 'English' });
+await page.getByRole("combobox").selectOption("en");
+await page.getByRole("combobox").selectOption({ label: "English" });
 
 // Check / uncheck
-await page.getByRole('checkbox', { name: 'Remember me' }).check();
-await page.getByRole('checkbox', { name: 'Agree' }).uncheck();
+await page.getByRole("checkbox", { name: "Remember me" }).check();
+await page.getByRole("checkbox", { name: "Agree" }).uncheck();
 
 // Hover
-await page.getByRole('link', { name: 'More' }).hover();
+await page.getByRole("link", { name: "More" }).hover();
 
 // Press keyboard key
-await page.getByRole('searchbox').press('Enter');
+await page.getByRole("searchbox").press("Enter");
 
 // Clear a field
-await page.getByRole('searchbox').clear();
+await page.getByRole("searchbox").clear();
 
 // Focus
-await page.getByRole('searchbox').focus();
+await page.getByRole("searchbox").focus();
 ```
 
 ### 2. Auto-Waiting Behavior
 
 Playwright automatically waits for these conditions before acting:
 
-| Action | Waits for |
-|---|---|
-| `click()` | Visible, stable, receives events, enabled |
-| `fill()` | Visible, enabled, editable |
-| `check()` | Visible, stable, enabled |
-| `selectOption()` | Visible, enabled |
-| `hover()` | Visible, stable |
-| `press()` | Focused |
+| Action           | Waits for                                 |
+| ---------------- | ----------------------------------------- |
+| `click()`        | Visible, stable, receives events, enabled |
+| `fill()`         | Visible, enabled, editable                |
+| `check()`        | Visible, stable, enabled                  |
+| `selectOption()` | Visible, enabled                          |
+| `hover()`        | Visible, stable                           |
+| `press()`        | Focused                                   |
 
 **You do not need to add manual waits before interactions.** If an element isn't ready, Playwright waits automatically up to the configured timeout.
 
@@ -70,13 +70,13 @@ When a click triggers navigation:
 
 ```typescript
 // Option A: Assert the new URL (web-first — auto-waits)
-await page.getByRole('link', { name: 'English' }).click();
+await page.getByRole("link", { name: "English" }).click();
 await expect(page).toHaveURL(/en\.wikipedia\.org/);
 
 // Option B: Wait for navigation explicitly (rarely needed)
 await Promise.all([
-  page.waitForURL('**/wiki/**'),
-  page.getByRole('link', { name: 'Article' }).click(),
+  page.waitForURL("**/wiki/**"),
+  page.getByRole("link", { name: "Article" }).click(),
 ]);
 ```
 
@@ -94,8 +94,10 @@ export class WikipediaHomePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.searchInput = page.getByRole('searchbox', { name: 'Search Wikipedia' });
-    this.searchButton = page.getByRole('button', { name: 'Search' });
+    this.searchInput = page.getByRole("searchbox", {
+      name: "Search Wikipedia",
+    });
+    this.searchButton = page.getByRole("button", { name: "Search" });
   }
 
   async search(query: string) {
@@ -106,6 +108,7 @@ export class WikipediaHomePage {
 ```
 
 **Rules for POM action methods**:
+
 - Name them as user actions: `search()`, `login()`, `selectLanguage()`
 - Don't include assertions — assertions stay in test files
 - Return `void` or the next POM when navigation occurs:
@@ -121,15 +124,16 @@ export class WikipediaHomePage {
 
 Before writing POM methods, use MCP tools to discover and test interactions:
 
-| MCP Tool | Playwright Equivalent | Use For |
-|---|---|---|
-| `browser_click` | `locator.click()` | Test that a click works on the right element |
-| `browser_type` | `locator.fill()` / `locator.pressSequentially()` | Test text input behavior |
-| `browser_hover` | `locator.hover()` | Test hover effects, tooltips, dropdowns |
-| `browser_select_option` | `locator.selectOption()` | Test dropdowns |
-| `browser_press_key` | `page.keyboard.press()` | Test keyboard shortcuts |
+| MCP Tool                | Playwright Equivalent                            | Use For                                      |
+| ----------------------- | ------------------------------------------------ | -------------------------------------------- |
+| `browser_click`         | `locator.click()`                                | Test that a click works on the right element |
+| `browser_type`          | `locator.fill()` / `locator.pressSequentially()` | Test text input behavior                     |
+| `browser_hover`         | `locator.hover()`                                | Test hover effects, tooltips, dropdowns      |
+| `browser_select_option` | `locator.selectOption()`                         | Test dropdowns                               |
+| `browser_press_key`     | `page.keyboard.press()`                          | Test keyboard shortcuts                      |
 
 **Workflow**:
+
 1. `browser_snapshot` → find the element in the accessibility tree
 2. `browser_click` / `browser_type` → test the interaction
 3. `browser_snapshot` again → verify the page updated correctly
@@ -141,31 +145,33 @@ Before writing POM methods, use MCP tools to discover and test interactions:
 
 ```typescript
 // Set up the handler BEFORE triggering the dialog
-page.on('dialog', async (dialog) => {
-  expect(dialog.message()).toContain('Are you sure?');
+page.on("dialog", async (dialog) => {
+  expect(dialog.message()).toContain("Are you sure?");
   await dialog.accept();
 });
-await page.getByRole('button', { name: 'Delete' }).click();
+await page.getByRole("button", { name: "Delete" }).click();
 ```
 
 #### File Uploads
 
 ```typescript
-await page.getByRole('button', { name: 'Upload' }).setInputFiles('path/to/file.pdf');
+await page
+  .getByRole("button", { name: "Upload" })
+  .setInputFiles("path/to/file.pdf");
 ```
 
 #### Iframes
 
 ```typescript
-const frame = page.frameLocator('#content-iframe');
-await frame.getByRole('button', { name: 'Submit' }).click();
+const frame = page.frameLocator("#content-iframe");
+await frame.getByRole("button", { name: "Submit" }).click();
 ```
 
 #### Double-click and Right-click
 
 ```typescript
 await locator.dblclick();
-await locator.click({ button: 'right' });
+await locator.click({ button: "right" });
 ```
 
 ### 7. Force and No-Wait Options

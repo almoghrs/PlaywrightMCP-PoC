@@ -45,13 +45,13 @@ PlaywrightMCP-PoC/
 
 ## 3. Technology Stack
 
-| Technology | Version | Purpose |
-|---|---|---|
-| Playwright | `^1.52` | Browser automation, test runner, assertions |
-| TypeScript | `^5.8` | Typed language for all test code |
+| Technology        | Version   | Purpose                                     |
+| ----------------- | --------- | ------------------------------------------- |
+| Playwright        | `^1.52`   | Browser automation, test runner, assertions |
+| TypeScript        | `^5.8`    | Typed language for all test code            |
 | `@playwright/mcp` | `^0.0.28` | MCP server exposing browser tools to agents |
-| Node.js | `>=18` | Runtime |
-| npm | `>=9` | Package manager |
+| Node.js           | `>=18`    | Runtime                                     |
+| npm               | `>=9`     | Package manager                             |
 
 ---
 
@@ -107,11 +107,13 @@ These rules are non-negotiable. They produce reliable, maintainable tests.
 ### Test Structure
 
 ```typescript
-import { test, expect } from '../fixtures/base.fixture';
+import { test, expect } from "../fixtures/base.fixture";
 
-test.describe('Feature Area', () => {
-  test('should [expected behavior] when [condition]', async ({ fixtureName }) => {
-    await test.step('action description', async () => {
+test.describe("Feature Area", () => {
+  test("should [expected behavior] when [condition]", async ({
+    fixtureName,
+  }) => {
+    await test.step("action description", async () => {
       // Arrange / Act / Assert within a logical step
     });
   });
@@ -130,28 +132,28 @@ test.describe('Feature Area', () => {
 
 Use the **most user-facing** locator available:
 
-| Priority | Method | When to use |
-|---|---|---|
-| 1 | `getByRole()` | Always prefer — matches how users/assistive tech see the page |
-| 2 | `getByTestId()` | When elements have `data-testid` attributes |
-| 3 | `getByText()` | For visible text content |
-| 4 | `getByLabel()` | For form fields with labels |
-| 5 | `getByPlaceholder()` | For inputs with placeholder text |
-| 6 | `locator()` (CSS) | When no semantic locator works |
-| 7 | XPath | **Last resort only** — document why |
+| Priority | Method               | When to use                                                   |
+| -------- | -------------------- | ------------------------------------------------------------- |
+| 1        | `getByRole()`        | Always prefer — matches how users/assistive tech see the page |
+| 2        | `getByTestId()`      | When elements have `data-testid` attributes                   |
+| 3        | `getByText()`        | For visible text content                                      |
+| 4        | `getByLabel()`       | For form fields with labels                                   |
+| 5        | `getByPlaceholder()` | For inputs with placeholder text                              |
+| 6        | `locator()` (CSS)    | When no semantic locator works                                |
+| 7        | XPath                | **Last resort only** — document why                           |
 
 ### Assertions
 
 - **Always use web-first assertions** — they auto-wait and auto-retry:
   ```typescript
-  await expect(locator).toBeVisible();      // ✅ Auto-waits
-  await expect(page).toHaveTitle(/text/);    // ✅ Auto-waits
+  await expect(locator).toBeVisible(); // ✅ Auto-waits
+  await expect(page).toHaveTitle(/text/); // ✅ Auto-waits
   ```
 - **Never do this**:
   ```typescript
-  await page.waitForTimeout(2000);           // ❌ Arbitrary wait
-  const el = await page.$('.foo');            // ❌ Not auto-waiting
-  expect(el).not.toBeNull();                 // ❌ Not a web-first assertion
+  await page.waitForTimeout(2000); // ❌ Arbitrary wait
+  const el = await page.$(".foo"); // ❌ Not auto-waiting
+  expect(el).not.toBeNull(); // ❌ Not a web-first assertion
   ```
 
 ### Page Object Model (POM)
@@ -160,7 +162,7 @@ Every page interaction goes through a POM class:
 
 ```typescript
 // pages/example.page.ts
-import type { Page, Locator } from '@playwright/test';
+import type { Page, Locator } from "@playwright/test";
 
 export class ExamplePage {
   readonly page: Page;
@@ -168,11 +170,11 @@ export class ExamplePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.heading = page.getByRole('heading', { name: 'Example' });
+    this.heading = page.getByRole("heading", { name: "Example" });
   }
 
   async goto() {
-    await this.page.goto('/example');
+    await this.page.goto("/example");
   }
 }
 ```
@@ -187,12 +189,12 @@ export class ExamplePage {
 
 ### Configuration (already set in `playwright.config.ts`)
 
-| Setting | Value | Purpose |
-|---|---|---|
-| `retries` | 1 (local), 2 (CI) | Auto-retry flaky tests |
-| `trace` | `on-first-retry` | Capture trace on first retry for debugging |
-| `screenshot` | `only-on-failure` | Auto-screenshot when a test fails |
-| `video` | `retain-on-failure` | Keep video of failed tests |
+| Setting      | Value               | Purpose                                    |
+| ------------ | ------------------- | ------------------------------------------ |
+| `retries`    | 1 (local), 2 (CI)   | Auto-retry flaky tests                     |
+| `trace`      | `on-first-retry`    | Capture trace on first retry for debugging |
+| `screenshot` | `only-on-failure`   | Auto-screenshot when a test fails          |
+| `video`      | `retain-on-failure` | Keep video of failed tests                 |
 
 ### Debugging Workflow
 
@@ -227,25 +229,25 @@ This starts the official Playwright MCP server, which exposes browser control to
 
 The `@playwright/mcp` server provides these tools for browser interaction:
 
-| Tool | Purpose |
-|---|---|
-| `browser_navigate` | Navigate to a URL |
-| `browser_snapshot` | Get the accessibility tree of the current page |
-| `browser_screenshot` | Take a screenshot of the current page |
-| `browser_click` | Click an element (by accessibility ref or coordinates) |
-| `browser_type` | Type text into a focused element |
-| `browser_hover` | Hover over an element |
-| `browser_select_option` | Select an option from a dropdown |
-| `browser_press_key` | Press a keyboard key |
-| `browser_tab_list` | List open browser tabs |
-| `browser_tab_new` | Open a new tab |
-| `browser_tab_select` | Switch to a tab |
-| `browser_tab_close` | Close a tab |
-| `browser_go_back` | Navigate back |
-| `browser_go_forward` | Navigate forward |
-| `browser_console_messages` | Get console messages |
-| `browser_file_upload` | Upload a file to the page |
-| `browser_pdf_save` | Save the page as a PDF |
+| Tool                       | Purpose                                                |
+| -------------------------- | ------------------------------------------------------ |
+| `browser_navigate`         | Navigate to a URL                                      |
+| `browser_snapshot`         | Get the accessibility tree of the current page         |
+| `browser_screenshot`       | Take a screenshot of the current page                  |
+| `browser_click`            | Click an element (by accessibility ref or coordinates) |
+| `browser_type`             | Type text into a focused element                       |
+| `browser_hover`            | Hover over an element                                  |
+| `browser_select_option`    | Select an option from a dropdown                       |
+| `browser_press_key`        | Press a keyboard key                                   |
+| `browser_tab_list`         | List open browser tabs                                 |
+| `browser_tab_new`          | Open a new tab                                         |
+| `browser_tab_select`       | Switch to a tab                                        |
+| `browser_tab_close`        | Close a tab                                            |
+| `browser_go_back`          | Navigate back                                          |
+| `browser_go_forward`       | Navigate forward                                       |
+| `browser_console_messages` | Get console messages                                   |
+| `browser_file_upload`      | Upload a file to the page                              |
+| `browser_pdf_save`         | Save the page as a PDF                                 |
 
 ### Agent Workflow with MCP
 
@@ -260,14 +262,14 @@ The `@playwright/mcp` server provides these tools for browser interaction:
 
 ## 9. npm Scripts Reference
 
-| Script | Command | Purpose |
-|---|---|---|
-| `npm test` | `npx playwright test` | Run all tests |
+| Script                | Command                        | Purpose                        |
+| --------------------- | ------------------------------ | ------------------------------ |
+| `npm test`            | `npx playwright test`          | Run all tests                  |
 | `npm run test:headed` | `npx playwright test --headed` | Run tests with visible browser |
-| `npm run test:debug` | `npx playwright test --debug` | Run with Playwright Inspector |
-| `npm run test:ui` | `npx playwright test --ui` | Run with Playwright UI mode |
-| `npm run report` | `npx playwright show-report` | Open the HTML test report |
-| `npm run mcp:start` | `npx @playwright/mcp@latest` | Start the MCP server |
+| `npm run test:debug`  | `npx playwright test --debug`  | Run with Playwright Inspector  |
+| `npm run test:ui`     | `npx playwright test --ui`     | Run with Playwright UI mode    |
+| `npm run report`      | `npx playwright show-report`   | Open the HTML test report      |
+| `npm run mcp:start`   | `npx @playwright/mcp@latest`   | Start the MCP server           |
 
 ---
 
@@ -275,14 +277,14 @@ The `@playwright/mcp` server provides these tools for browser interaction:
 
 Before performing a task, **read the relevant skill file**. Each skill provides detailed instructions, examples, and anti-patterns.
 
-| Skill | Path | Use When |
-|---|---|---|
-| **Test Authoring** | `skills/test-authoring/SKILL.md` | Creating new test files, structuring tests, extending fixtures |
-| **Element Location** | `skills/element-location/SKILL.md` | Finding elements on a page, choosing the right locator strategy |
-| **DOM Inspection** | `skills/dom-inspection/SKILL.md` | Inspecting page state, reading the accessibility tree via MCP |
+| Skill                  | Path                                 | Use When                                                              |
+| ---------------------- | ------------------------------------ | --------------------------------------------------------------------- |
+| **Test Authoring**     | `skills/test-authoring/SKILL.md`     | Creating new test files, structuring tests, extending fixtures        |
+| **Element Location**   | `skills/element-location/SKILL.md`   | Finding elements on a page, choosing the right locator strategy       |
+| **DOM Inspection**     | `skills/dom-inspection/SKILL.md`     | Inspecting page state, reading the accessibility tree via MCP         |
 | **Assertion Building** | `skills/assertion-building/SKILL.md` | Writing assertions, choosing the right matcher, avoiding flaky checks |
-| **Page Interaction** | `skills/page-interaction/SKILL.md` | Clicking, typing, selecting, hovering, navigating |
-| **State Management** | `skills/state-management/SKILL.md` | Managing fixtures, storage state, environment config, test isolation |
+| **Page Interaction**   | `skills/page-interaction/SKILL.md`   | Clicking, typing, selecting, hovering, navigating                     |
+| **State Management**   | `skills/state-management/SKILL.md`   | Managing fixtures, storage state, environment config, test isolation  |
 
 ---
 

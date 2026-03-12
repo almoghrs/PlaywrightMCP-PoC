@@ -18,15 +18,15 @@ description: How to find elements on a page using Playwright's locator strategie
 
 Always use the **most user-facing** locator available. This order is mandatory:
 
-| Priority | Method | Example | When |
-|---|---|---|---|
-| 1 | `getByRole()` | `page.getByRole('button', { name: 'Search' })` | Element has a semantic role + accessible name |
-| 2 | `getByTestId()` | `page.getByTestId('search-form')` | Element has `data-testid` attribute |
-| 3 | `getByText()` | `page.getByText('Welcome to Wikipedia')` | Unique visible text content |
-| 4 | `getByLabel()` | `page.getByLabel('Username')` | Form field with associated label |
-| 5 | `getByPlaceholder()` | `page.getByPlaceholder('Search...')` | Input with placeholder text |
-| 6 | `locator()` (CSS) | `page.locator('#mp-upper')` | No semantic locator works |
-| 7 | XPath | `page.locator('xpath=...')` | **Absolute last resort** — document why |
+| Priority | Method               | Example                                        | When                                          |
+| -------- | -------------------- | ---------------------------------------------- | --------------------------------------------- |
+| 1        | `getByRole()`        | `page.getByRole('button', { name: 'Search' })` | Element has a semantic role + accessible name |
+| 2        | `getByTestId()`      | `page.getByTestId('search-form')`              | Element has `data-testid` attribute           |
+| 3        | `getByText()`        | `page.getByText('Welcome to Wikipedia')`       | Unique visible text content                   |
+| 4        | `getByLabel()`       | `page.getByLabel('Username')`                  | Form field with associated label              |
+| 5        | `getByPlaceholder()` | `page.getByPlaceholder('Search...')`           | Input with placeholder text                   |
+| 6        | `locator()` (CSS)    | `page.locator('#mp-upper')`                    | No semantic locator works                     |
+| 7        | XPath                | `page.locator('xpath=...')`                    | **Absolute last resort** — document why       |
 
 ### 2. Translating Accessibility Tree → Locators
 
@@ -42,12 +42,12 @@ When you run `browser_snapshot` via MCP, you get an accessibility tree like:
 
 Map these directly to Playwright locators:
 
-| Accessibility Tree Entry | Playwright Locator |
-|---|---|
+| Accessibility Tree Entry        | Playwright Locator                                           |
+| ------------------------------- | ------------------------------------------------------------ |
 | `heading "Wikipedia" [level=1]` | `page.getByRole('heading', { name: 'Wikipedia', level: 1 })` |
-| `searchbox "Search Wikipedia"` | `page.getByRole('searchbox', { name: 'Search Wikipedia' })` |
-| `button "Search"` | `page.getByRole('button', { name: 'Search' })` |
-| `link "English"` | `page.getByRole('link', { name: 'English' })` |
+| `searchbox "Search Wikipedia"`  | `page.getByRole('searchbox', { name: 'Search Wikipedia' })`  |
+| `button "Search"`               | `page.getByRole('button', { name: 'Search' })`               |
+| `link "English"`                | `page.getByRole('link', { name: 'English' })`                |
 
 > **This is the key workflow**: snapshot → read tree → write `getByRole()` locators.
 
@@ -57,16 +57,18 @@ When a locator matches multiple elements, narrow it down:
 
 ```typescript
 // Filter by child content
-page.getByRole('listitem').filter({ hasText: 'JavaScript' });
+page.getByRole("listitem").filter({ hasText: "JavaScript" });
 
 // Filter by containing another locator
-page.getByRole('listitem').filter({ has: page.getByRole('link', { name: 'Edit' }) });
+page
+  .getByRole("listitem")
+  .filter({ has: page.getByRole("link", { name: "Edit" }) });
 
 // Chain with .locator() for descendants
-page.getByRole('navigation').locator('a.active');
+page.getByRole("navigation").locator("a.active");
 
 // Use .first(), .last(), .nth() as a last resort
-page.getByRole('link', { name: 'Edit' }).first();
+page.getByRole("link", { name: "Edit" }).first();
 ```
 
 ### 4. Exact vs. Substring Matching
@@ -74,8 +76,8 @@ page.getByRole('link', { name: 'Edit' }).first();
 By default, `getByText()` and role `name` do **substring** matching:
 
 ```typescript
-page.getByText('Wikipedia');          // Matches "Welcome to Wikipedia, the free encyclopedia"
-page.getByText('Wikipedia', { exact: true }); // Only matches exactly "Wikipedia"
+page.getByText("Wikipedia"); // Matches "Welcome to Wikipedia, the free encyclopedia"
+page.getByText("Wikipedia", { exact: true }); // Only matches exactly "Wikipedia"
 ```
 
 Use `{ exact: true }` when the substring matches too many elements.
@@ -85,8 +87,8 @@ Use `{ exact: true }` when the substring matches too many elements.
 For flexible matching:
 
 ```typescript
-page.getByRole('heading', { name: /welcome/i });   // Case-insensitive
-page.getByText(/\d+ results found/);                // Pattern matching
+page.getByRole("heading", { name: /welcome/i }); // Case-insensitive
+page.getByText(/\d+ results found/); // Pattern matching
 ```
 
 ### 6. Where Locators Live
@@ -104,7 +106,7 @@ export class SearchResultsPage {
   }
 
   resultByTitle(title: string): Locator {
-    return this.page.getByRole('link', { name: title });
+    return this.page.getByRole("link", { name: title });
   }
 }
 ```

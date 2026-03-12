@@ -43,24 +43,26 @@ description: How to inspect and understand the current state of a web page using
 
 #### How to Read It
 
-| Tree Element | Meaning | Playwright Locator |
-|---|---|---|
-| `heading "Wikipedia" [level=1]` | `<h1>` with text "Wikipedia" | `getByRole('heading', { name: 'Wikipedia', level: 1 })` |
-| `searchbox "Search Wikipedia"` | Input with role=searchbox, accessible name from label | `getByRole('searchbox', { name: 'Search Wikipedia' })` |
-| `button "Search"` | Button element with text "Search" | `getByRole('button', { name: 'Search' })` |
-| `link "Log in"` | Anchor tag with text "Log in" | `getByRole('link', { name: 'Log in' })` |
-| `navigation "Personal tools"` | Nav landmark with label | `getByRole('navigation', { name: 'Personal tools' })` |
+| Tree Element                    | Meaning                                               | Playwright Locator                                      |
+| ------------------------------- | ----------------------------------------------------- | ------------------------------------------------------- |
+| `heading "Wikipedia" [level=1]` | `<h1>` with text "Wikipedia"                          | `getByRole('heading', { name: 'Wikipedia', level: 1 })` |
+| `searchbox "Search Wikipedia"`  | Input with role=searchbox, accessible name from label | `getByRole('searchbox', { name: 'Search Wikipedia' })`  |
+| `button "Search"`               | Button element with text "Search"                     | `getByRole('button', { name: 'Search' })`               |
+| `link "Log in"`                 | Anchor tag with text "Log in"                         | `getByRole('link', { name: 'Log in' })`                 |
+| `navigation "Personal tools"`   | Nav landmark with label                               | `getByRole('navigation', { name: 'Personal tools' })`   |
 
 ### 2. Secondary Tool: `browser_screenshot`
 
 `browser_screenshot` captures a visual image of the page.
 
 **When to use**:
+
 - Verifying layout or visual state that the accessibility tree doesn't convey
 - Confirming what the user sees (modal state, error messages, loading states)
 - Debugging when the snapshot looks correct but the test still fails
 
 **When NOT to use**:
+
 - As a substitute for `browser_snapshot` — always prefer the accessibility tree for locator discovery
 - For assertion building — use Playwright's web-first assertions instead
 

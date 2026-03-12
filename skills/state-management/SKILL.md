@@ -23,8 +23,8 @@ Fixtures are the correct way to manage state in Playwright. They provide **per-t
 
 ```typescript
 // tests/fixtures/base.fixture.ts
-import { test as base } from '@playwright/test';
-import { WikipediaHomePage } from '../../pages/wikipedia-home.page';
+import { test as base } from "@playwright/test";
+import { WikipediaHomePage } from "../../pages/wikipedia-home.page";
 
 type Fixtures = {
   homePage: WikipediaHomePage;
@@ -36,30 +36,33 @@ export const test = base.extend<Fixtures>({
     const homePage = new WikipediaHomePage(page);
     await homePage.goto();
 
-    await use(homePage);  // ← test runs here
+    await use(homePage); // ← test runs here
 
     // TEARDOWN: runs after the test (optional)
     // Cleanup logic goes here if needed
   },
 });
 
-export { expect } from '@playwright/test';
+export { expect } from "@playwright/test";
 ```
 
 #### Fixture Scope
 
-| Scope | Behavior | Use When |
-|---|---|---|
-| `'test'` (default) | Created per test | Most cases — keeps tests isolated |
-| `'worker'` | Created per worker process | Expensive one-time setup (DB seed, login tokens) |
+| Scope              | Behavior                   | Use When                                         |
+| ------------------ | -------------------------- | ------------------------------------------------ |
+| `'test'` (default) | Created per test           | Most cases — keeps tests isolated                |
+| `'worker'`         | Created per worker process | Expensive one-time setup (DB seed, login tokens) |
 
 ```typescript
 // Worker-scoped fixture (shared across tests in the same worker)
 export const test = base.extend<{}, { authToken: string }>({
-  authToken: [async ({}, use) => {
-    const token = await fetchAuthToken();
-    await use(token);
-  }, { scope: 'worker' }],
+  authToken: [
+    async ({}, use) => {
+      const token = await fetchAuthToken();
+      await use(token);
+    },
+    { scope: "worker" },
+  ],
 });
 ```
 
@@ -96,17 +99,17 @@ For tests that require a logged-in user, use Playwright's `storageState` to save
 
 ```typescript
 // tests/auth.setup.ts
-import { test as setup, expect } from '@playwright/test';
+import { test as setup, expect } from "@playwright/test";
 
-setup('authenticate', async ({ page }) => {
-  await page.goto('/login');
-  await page.getByLabel('Username').fill(process.env.TEST_USERNAME!);
-  await page.getByLabel('Password').fill(process.env.TEST_PASSWORD!);
-  await page.getByRole('button', { name: 'Log in' }).click();
+setup("authenticate", async ({ page }) => {
+  await page.goto("/login");
+  await page.getByLabel("Username").fill(process.env.TEST_USERNAME!);
+  await page.getByLabel("Password").fill(process.env.TEST_PASSWORD!);
+  await page.getByRole("button", { name: "Log in" }).click();
   await expect(page).toHaveURL(/Main_Page/);
 
   // Save signed-in state
-  await page.context().storageState({ path: '.auth/user.json' });
+  await page.context().storageState({ path: ".auth/user.json" });
 });
 ```
 
@@ -115,12 +118,12 @@ setup('authenticate', async ({ page }) => {
 ```typescript
 export default defineConfig({
   projects: [
-    { name: 'setup', testMatch: /.*\.setup\.ts/ },
+    { name: "setup", testMatch: /.*\.setup\.ts/ },
     {
-      name: 'chromium',
-      dependencies: ['setup'],
+      name: "chromium",
+      dependencies: ["setup"],
       use: {
-        storageState: '.auth/user.json',
+        storageState: ".auth/user.json",
       },
     },
   ],
@@ -182,12 +185,12 @@ Every test must be **completely independent**. Follow these rules:
 
 #### `beforeEach` vs Fixtures
 
-| Use Case | Use |
-|---|---|
-| Navigate to a starting page | **Fixture** — encapsulates POM creation + navigation |
-| Set a cookie or local storage | **Fixture** with `storageState` or `page.context().addCookies()` |
-| Seed test data | **Fixture** (worker-scoped if expensive) |
-| Log the test name for debugging | `beforeEach` (not state-related) |
+| Use Case                        | Use                                                              |
+| ------------------------------- | ---------------------------------------------------------------- |
+| Navigate to a starting page     | **Fixture** — encapsulates POM creation + navigation             |
+| Set a cookie or local storage   | **Fixture** with `storageState` or `page.context().addCookies()` |
+| Seed test data                  | **Fixture** (worker-scoped if expensive)                         |
+| Log the test name for debugging | `beforeEach` (not state-related)                                 |
 
 ```typescript
 // ✅ Use fixtures for state setup
@@ -201,7 +204,7 @@ export const test = base.extend<Fixtures>({
 
 // ❌ Don't use beforeEach for what fixtures do better
 test.beforeEach(async ({ page }) => {
-  await page.goto('/wiki/Main_Page');  // ❌ Should be a fixture
+  await page.goto("/wiki/Main_Page"); // ❌ Should be a fixture
 });
 ```
 

@@ -17,11 +17,11 @@ description: How to create new E2E test files, structure them correctly, extend 
 
 ### 1. File Naming & Placement
 
-| File Type | Naming Convention | Location |
-|---|---|---|
-| Test spec | `<feature>.spec.ts` | `tests/<area>/` |
-| Page Object | `<page-name>.page.ts` | `pages/` |
-| Fixture | `<name>.fixture.ts` | `tests/fixtures/` |
+| File Type   | Naming Convention     | Location          |
+| ----------- | --------------------- | ----------------- |
+| Test spec   | `<feature>.spec.ts`   | `tests/<area>/`   |
+| Page Object | `<page-name>.page.ts` | `pages/`          |
+| Fixture     | `<name>.fixture.ts`   | `tests/fixtures/` |
 
 - Group tests by application area: `tests/wikipedia/`, `tests/search/`, etc.
 - One POM class per page (or major page section).
@@ -32,15 +32,17 @@ description: How to create new E2E test files, structure them correctly, extend 
 Every test file follows this structure:
 
 ```typescript
-import { test, expect } from '../fixtures/base.fixture';
+import { test, expect } from "../fixtures/base.fixture";
 
-test.describe('Feature Area', () => {
-  test('should [expected behavior] when [condition]', async ({ fixtureName }) => {
-    await test.step('describe what this step does', async () => {
+test.describe("Feature Area", () => {
+  test("should [expected behavior] when [condition]", async ({
+    fixtureName,
+  }) => {
+    await test.step("describe what this step does", async () => {
       // Arrange / Act
     });
 
-    await test.step('verify the result', async () => {
+    await test.step("verify the result", async () => {
       // Assert
       await expect(fixtureName.someLocator).toBeVisible();
     });
@@ -49,6 +51,7 @@ test.describe('Feature Area', () => {
 ```
 
 **Key rules**:
+
 - Always import `test` and `expect` from a fixture file, not from `@playwright/test` directly.
 - Use `test.describe()` to group related tests.
 - Use `test.step()` for logical sections — these appear in traces and reports.
@@ -59,7 +62,7 @@ test.describe('Feature Area', () => {
 When you need to interact with a new page:
 
 ```typescript
-import type { Page, Locator } from '@playwright/test';
+import type { Page, Locator } from "@playwright/test";
 
 export class SearchResultsPage {
   readonly page: Page;
@@ -69,9 +72,13 @@ export class SearchResultsPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.resultHeading = page.getByRole('heading', { level: 1 });
-    this.resultList = page.getByRole('list').filter({ hasText: 'search results' });
-    this.noResultsMessage = page.getByText('There were no results matching the query.');
+    this.resultHeading = page.getByRole("heading", { level: 1 });
+    this.resultList = page
+      .getByRole("list")
+      .filter({ hasText: "search results" });
+    this.noResultsMessage = page.getByText(
+      "There were no results matching the query.",
+    );
   }
 
   async goto(query: string) {
@@ -81,6 +88,7 @@ export class SearchResultsPage {
 ```
 
 **POM rules**:
+
 - All locators are `readonly` properties set in the constructor.
 - Navigation methods (`goto`, `navigateToSection`) live on the POM.
 - The POM **never contains assertions** — assertions live in test files only.
@@ -93,13 +101,13 @@ To add a new fixture for a POM:
 
 ```typescript
 // tests/fixtures/base.fixture.ts
-import { test as base } from '@playwright/test';
-import { WikipediaHomePage } from '../../pages/wikipedia-home.page';
-import { SearchResultsPage } from '../../pages/search-results.page';
+import { test as base } from "@playwright/test";
+import { WikipediaHomePage } from "../../pages/wikipedia-home.page";
+import { SearchResultsPage } from "../../pages/search-results.page";
 
 type Fixtures = {
   homePage: WikipediaHomePage;
-  searchResults: SearchResultsPage;  // ← add new fixture type
+  searchResults: SearchResultsPage; // ← add new fixture type
 };
 
 export const test = base.extend<Fixtures>({
@@ -109,17 +117,19 @@ export const test = base.extend<Fixtures>({
     await use(homePage);
   },
 
-  searchResults: async ({ page }, use) => {       // ← add new fixture
+  searchResults: async ({ page }, use) => {
+    // ← add new fixture
     const searchResults = new SearchResultsPage(page);
     await use(searchResults);
     // no goto() here — tests will navigate as needed
   },
 });
 
-export { expect } from '@playwright/test';
+export { expect } from "@playwright/test";
 ```
 
 **Fixture rules**:
+
 - Fixtures handle setup (and optionally teardown, after `use()`).
 - Only navigate in the fixture if every test using it starts from the same page.
 - If tests need different starting states, let them navigate themselves.
@@ -127,14 +137,14 @@ export { expect } from '@playwright/test';
 
 ### 5. Naming Conventions
 
-| Element | Convention | Example |
-|---|---|---|
-| `test.describe` | Feature area (Title Case) | `'Wikipedia Homepage Navigation'` |
-| `test()` name | `should ... when ...` | `'should display search results when query is entered'` |
-| `test.step()` | Lowercase action phrase | `'enter search query and submit'` |
-| POM class | PascalCase + Page suffix | `WikipediaHomePage` |
-| POM file | kebab-case + `.page.ts` | `wikipedia-home.page.ts` |
-| Fixture name | camelCase | `homePage`, `searchResults` |
+| Element         | Convention                | Example                                                 |
+| --------------- | ------------------------- | ------------------------------------------------------- |
+| `test.describe` | Feature area (Title Case) | `'Wikipedia Homepage Navigation'`                       |
+| `test()` name   | `should ... when ...`     | `'should display search results when query is entered'` |
+| `test.step()`   | Lowercase action phrase   | `'enter search query and submit'`                       |
+| POM class       | PascalCase + Page suffix  | `WikipediaHomePage`                                     |
+| POM file        | kebab-case + `.page.ts`   | `wikipedia-home.page.ts`                                |
+| Fixture name    | camelCase                 | `homePage`, `searchResults`                             |
 
 ## Anti-Patterns
 
