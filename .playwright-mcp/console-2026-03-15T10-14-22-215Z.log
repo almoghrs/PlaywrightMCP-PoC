@@ -1,0 +1,6 @@
+[   20446ms] [WARNING] The stream mediawiki.web_ui_actions is out of sample. No event will be sent @ https://en.wikipedia.org/w/load.php?lang=en&modules=ext.eventLogging.metricsPlatform&skin=vector-2022&version=1i3oh:4
+[   79688ms] [WARNING] The stream mediawiki.client.session_tick is out of sample. No event will be sent @ https://en.wikipedia.org/w/load.php?lang=en&modules=ext.eventLogging.metricsPlatform&skin=vector-2022&version=1i3oh:4
+[  281999ms] [WARNING] The stream mediawiki.client.session_tick is out of sample. No event will be sent @ https://en.wikipedia.org/w/load.php?lang=en&modules=ext.eventLogging.metricsPlatform&skin=vector-2022&version=1i3oh:4
+[  282008ms] [WARNING] The stream mediawiki.client.session_tick is out of sample. No event will be sent @ https://en.wikipedia.org/w/load.php?lang=en&modules=ext.eventLogging.metricsPlatform&skin=vector-2022&version=1i3oh:4
+[  282008ms] [WARNING] The stream mediawiki.client.session_tick is out of sample. No event will be sent @ https://en.wikipedia.org/w/load.php?lang=en&modules=ext.eventLogging.metricsPlatform&skin=vector-2022&version=1i3oh:4
+[  282008ms] [WARNING] The stream mediawiki.client.session_tick is out of sample. No event will be sent @ https://en.wikipedia.org/w/load.php?lang=en&modules=ext.eventLogging.metricsPlatform&skin=vector-2022&version=1i3oh:4
